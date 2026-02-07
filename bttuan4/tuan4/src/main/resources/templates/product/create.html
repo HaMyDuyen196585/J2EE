@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{_layout}">
+<body>
+    <div layout:fragment="content">
+        <div class="card shadow-sm p-4">
+            <h3 class="mb-4">Create New Product</h3>
+            <form th:action="@{/products/create}" th:object="${product}" method="post" enctype="multipart/form-data">
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Name</label>
+                    <input type="text" th:field="*{name}" class="form-control" placeholder="product Name">
+                    <div class="alert alert-warning mt-1 py-1" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Price</label>
+                    <input type="number" th:field="*{price}" class="form-control" placeholder="0">
+                    <div class="alert alert-warning mt-1 py-1" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Image</label>
+                    <input type="file" name="imageProduct" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Category</label>
+                    <select class="form-select" th:field="*{category.id}">
+                        <option th:each="cat : ${categories}" 
+                                th:value="${cat.id}" 
+                                th:text="${cat.name}"></option>
+                    </select>
+                </div>
+
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-success px-4">Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
