@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý sản phẩm</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        /* CSS để cố định khung ảnh, tránh bị giật khi load */
+        .img-container {
+            width: 80px;
+            height: 100px;
+            overflow: hidden;
+            margin: auto;
+            border: 1px solid #dee2e6;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Giúp ảnh không bị méo */
+        }
+    </style>
+</head>
+<body class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold">Danh sách sản phẩm</h2>
+        <a th:href="@{/products/add}" class="btn btn-success shadow-sm fw-bold">+ Thêm sản phẩm mới</a>
+    </div>
+    
+    <div class="card shadow border-0">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 25%">Tên sản phẩm</th>
+                        <th style="width: 15%" class="text-center">Hình ảnh</th>
+                        <th style="width: 15%">Giá (VNĐ)</th>
+                        <th style="width: 20%">Danh mục</th>
+                        <th style="width: 20%" class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${products.empty}">
+                        <td colspan="6" class="text-center py-4 text-muted">Chưa có sản phẩm nào bro ơi!</td>
+                    </tr>
+                    
+                    <tr th:each="p : ${products}">
+                        <td th:text="${p.id}" class="align-middle"></td>
+                        <td th:text="${p.name}" class="align-middle fw-bold"></td>
+                        <td class="align-middle text-center">
+                            <div class="img-container rounded shadow-sm">
+                                <img th:src="${p.image}" 
+                                     onerror="this.onerror=null;this.src='https://via.placeholder.com/80x100?text=No+Image';">
+                            </div>
+                        </td>
+                        <td class="align-middle text-danger fw-bold" 
+                            th:text="${p.price != null ? #numbers.formatInteger(p.price, 3, 'POINT') + ' đ' : '0 đ'}">
+                        </td>
+                        <td th:text="${p.category != null ? p.category.name : 'Chưa phân loại'}" class="align-middle"></td>
+                        <td class="text-center align-middle">
+                            <div class="btn-group">
+                                <a th:href="@{'/products/edit/' + ${p.id}}" class="btn btn-warning btn-sm fw-bold">Sửa</a>
+                                <a th:href="@{'/products/delete/' + ${p.id}}" class="btn btn-danger btn-sm fw-bold ms-1" 
+                                   onclick="return confirm('Bro có chắc muốn xóa cuốn này không?')">Xóa</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
