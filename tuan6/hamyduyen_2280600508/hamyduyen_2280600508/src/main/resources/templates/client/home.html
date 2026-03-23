@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Flower - Cửa hàng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-dark {
+            background-color: #f472e7;
+        }
+
+        .product-card {
+            transition: transform 0.3s;
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: contain;
+            padding: 10px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark px-4 mb-4 shadow">
+        <a class="navbar-brand fw-bold" href="/home"><i class="fas fa-microchip me-2"></i>Flower</a>
+        <div class="ms-auto d-flex align-items-center">
+
+            <div sec:authorize="!isAuthenticated()">
+                <a th:href="@{/register}" class="btn btn-outline-warning me-2 fw-bold">Đăng ký</a>
+                <a th:href="@{/login}" class="btn btn-primary fw-bold">Đăng nhập</a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">
+                <span class="text-white me-3">Xin chào, <b sec:authentication="name" class="text-warning"></b>!</span>
+
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/products}"
+                    class="btn btn-outline-info rounded-pill me-3">
+                    <i class="fas fa-cogs"></i> Trang Quản trị
+                </a>
+
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-danger rounded-pill fw-bold">Thoát tài khoản</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <h2 class="fw-bold mb-4 text-center">Sản Phẩm Nổi Bật</h2>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col" th:each="p : ${products}">
+                <a th:href="@{'/products/detail/' + ${p.id}}" class="text-dark">
+                    <div class="card product-card h-100">
+                        <img th:src="${p.image}" class="card-img-top"
+                            onerror="this.src='https://via.placeholder.com/200?text=NO+IMG';">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold" th:text="${p.name}">Tên sản phẩm</h5>
+                            <h5 class="text-danger fw-bold"
+                                th:text="${#numbers.formatInteger(p.price, 3, 'POINT')} + ' đ'">Giá</h5>
+                            <span class="badge bg-secondary mt-2"
+                                th:text="${p.category != null ? p.category.name : 'Khác'}">Danh mục</span>
+                        </div>
+                        <div class="card-footer bg-white border-0 text-center pb-3">
+                            <button class="btn btn-primary w-100 rounded-pill fw-bold">Xem chi tiết</button>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
