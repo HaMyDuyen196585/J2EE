@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Flower - Kết quả tìm kiếm</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .navbar-dark {
+            background-color: #8f9fed;
+        }
+
+        .search-filter-banner {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            color: white;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .search-form .form-group {
+            flex: 1;
+            min-width: 180px;
+            margin-bottom: 0;
+        }
+
+        .search-form label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .search-form input,
+        .search-form select {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .search-btn {
+            margin-top: 0;
+        }
+
+        .filter-sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            height: fit-content;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-section {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .filter-section:last-child {
+            border-bottom: none;
+        }
+
+        .filter-section h6 {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .product-card {
+            transition: transform 0.3s;
+            border-radius: 15px;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-img-top {
+            height: 200px;
+            object-fit: contain;
+            padding: 10px;
+        }
+
+        .empty-result {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-result i {
+            font-size: 80px;
+            color: #dee2e6;
+            margin-bottom: 20px;
+        }
+
+        .result-header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-count {
+            font-size: 1.1rem;
+            color: #666;
+        }
+
+        .result-count strong {
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-form .form-group {
+                min-width: 100%;
+            }
+
+            .filter-sidebar {
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark px-4 mb-4 shadow">
+        <a class="navbar-brand fw-bold" href="/home"><i class="fas fa-microchip me-2"></i>Flower</a>
+        <div class="ms-auto d-flex align-items-center">
+
+            <div sec:authorize="!isAuthenticated()">
+                <a th:href="@{/register}" class="btn btn-outline-warning me-2 fw-bold">Đăng ký</a>
+                <a th:href="@{/login}" class="btn btn-primary fw-bold">Đăng nhập</a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()" class="d-flex align-items-center">
+                <span class="text-white me-3">Xin chào, <b sec:authentication="name" class="text-warning"></b>!</span>
+
+                <a th:href="@{/cart}" class="btn btn-outline-light rounded-pill me-3 fw-bold">
+                    <i class="fas fa-shopping-cart me-1"></i> Giỏ hàng
+                </a>
+
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/products}"
+                    class="btn btn-outline-info rounded-pill me-3">
+                    <i class="fas fa-cogs"></i> Trang Quản trị
+                </a>
+
+                <form th:action="@{/logout}" method="post" class="m-0">
+                    <button type="submit" class="btn btn-danger rounded-pill fw-bold">Thoát tài khoản</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container pb-5">
+        <!-- Search Filter Banner -->
+        <div class="search-filter-banner">
+            <h3 class="mb-4 text-center"><i class="fas fa-search me-2"></i>Tìm kiếm sản phẩm</h3>
+            <form th:action="@{/search}" method="get" class="search-form">
+                <div class="form-group flex-grow-1">
+                    <label for="keyword">Từ khóa:</label>
+                    <input type="text" id="keyword" name="keyword" class="form-control"
+                        placeholder="Nhập tên sản phẩm..." th:value="${keyword}">
+                </div>
+
+                <div class="form-group" style="min-width: 180px;">
+                    <label for="categoryId">Danh mục:</label>
+                    <select id="categoryId" name="categoryId" class="form-select">
+                        <option value="">-- Tất cả danh mục --</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"
+                            th:selected="${categoryId != null and categoryId == cat.id}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="min-width: 180px;">
+                    <label for="sortBy">Sắp xếp:</label>
+                    <select id="sortBy" name="sortBy" class="form-select">
+                        <option value="">-- Mặc định --</option>
+                        <option value="name_asc" th:selected="${sortBy == 'name_asc'}">Tên: A-Z</option>
+                        <option value="name_desc" th:selected="${sortBy == 'name_desc'}">Tên: Z-A</option>
+                        <option value="price_asc" th:selected="${sortBy == 'price_asc'}">Giá: Thấp tới cao</option>
+                        <option value="price_desc" th:selected="${sortBy == 'price_desc'}">Giá: Cao tới thấp</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-warning fw-bold search-btn">
+                    <i class="fas fa-search me-2"></i>Tìm kiếm
+                </button>
+            </form>
+        </div>
+
+        <!-- Result Header -->
+        <div class="result-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="result-count mb-0">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Tìm thấy <strong th:text="${totalResults}">0</strong> sản phẩm
+                        <span th:if="${keyword}" class="ms-2">cho từ khóa "<strong
+                                th:text="${keyword}"></strong>"</span>
+                    </p>
+                </div>
+                <a th:href="@{/home}" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-home me-1"></i>Quay lại trang chủ
+                </a>
+            </div>
+        </div>
+
+        <!-- Empty Result Message -->
+        <div th:if="${products.isEmpty()}" class="text-center">
+            <div class="empty-result">
+                <i class="fas fa-search"></i>
+                <h4 class="text-muted">Không tìm thấy sản phẩm</h4>
+                <p class="text-muted mb-4">
+                    <span th:if="${keyword}">Không có sản phẩm nào khớp với từ khóa "<span
+                            th:text="${keyword}"></span>"</span>
+                    <span th:unless="${keyword}">Hãy thử tìm kiếm bằng từ khóa khác</span>
+                </p>
+                <a th:href="@{/home}" class="btn btn-primary rounded-pill fw-bold">
+                    <i class="fas fa-home me-2"></i>Quay lại trang chủ
+                </a>
+            </div>
+        </div>
+
+        <!-- Search Results -->
+        <div th:unless="${products.isEmpty()}">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <div class="col" th:each="p : ${products}">
+                    <a th:href="@{'/products/detail/' + ${p.id}}" class="text-dark">
+                        <div class="card product-card h-100">
+                            <img th:src="${p.image}" class="card-img-top"
+                                onerror="this.src='https://via.placeholder.com/200?text=NO+IMG';">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold" th:text="${p.name}">Tên sản phẩm</h5>
+                                <h5 class="text-danger fw-bold"
+                                    th:text="${#numbers.formatInteger(p.price, 3, 'POINT')} + ' đ'">Giá</h5>
+                                <span class="badge bg-secondary mt-2"
+                                    th:text="${p.category != null ? p.category.name : 'Khác'}">Danh mục</span>
+                            </div>
+                            <div class="card-footer bg-white border-0 text-center pb-3">
+                                <button class="btn btn-primary w-100 rounded-pill fw-bold">Xem chi tiết</button>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

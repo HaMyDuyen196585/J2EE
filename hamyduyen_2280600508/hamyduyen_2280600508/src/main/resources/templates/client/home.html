@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flower Shop - Cửa Hàng Hoa Tươi</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        :root {
+            --primary-pink: #e85d75;
+            --primary-rose: #d63447;
+            --secondary-coral: #f08080;
+            --accent-green: #66bb6a;
+            --light-bg: #fdf8f5;
+            --cream: #fffbf5;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-dark);
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar-flower {
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe8ed 100%);
+            box-shadow: 0 2px 8px rgba(232, 93, 117, 0.1);
+            border-bottom: 2px solid var(--primary-pink);
+            padding: 0.8rem 0;
+        }
+
+        .navbar-flower .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-rose) !important;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 1px;
+        }
+
+        .navbar-flower .navbar-brand i {
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .nav-btn {
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .nav-btn-primary {
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-rose));
+            color: white;
+            border: 2px solid var(--primary-rose);
+        }
+
+        .nav-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(232, 93, 117, 0.4);
+            color: white;
+        }
+
+        /* ===== HERO BANNER ===== */
+        .hero-banner {
+            background: linear-gradient(135deg, #fff5f7 0%, #ffeef2 100%);
+            padding: 60px 20px;
+            margin-bottom: 40px;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-banner::before {
+            content: '\f7b6';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            font-size: 200px;
+            opacity: 0.05;
+            right: -50px;
+            top: -50px;
+        }
+
+        .hero-banner h1 {
+            color: var(--primary-rose);
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .hero-banner p {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .hero-banner .btn {
+            border-radius: 30px;
+            padding: 12px 40px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        /* ===== SEARCH BANNER ===== */
+        .search-banner {
+            background: linear-gradient(135deg, var(--primary-pink) 0%, var(--primary-rose) 100%);
+            padding: 40px 30px;
+            margin-bottom: 50px;
+            border-radius: 20px;
+            color: white;
+            box-shadow: 0 10px 30px rgba(232, 93, 117, 0.2);
+        }
+
+        .search-banner h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+
+        .search-form .form-group {
+            flex: 1;
+            min-width: 180px;
+            margin-bottom: 0;
+        }
+
+        .search-form label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .search-form input,
+        .search-form select {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+
+        .search-form input::placeholder {
+            color: #bdbdbd;
+        }
+
+        .search-form input:focus,
+        .search-form select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+        }
+
+        .search-btn {
+            padding: 12px 35px;
+            background-color: white;
+            color: var(--primary-rose);
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ===== SECTION TITLE ===== */
+        .section-title {
+            position: relative;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            color: var(--primary-rose);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::before,
+        .section-title h2::after {
+            content: '✿';
+            color: var(--accent-green);
+            margin: 0 15px;
+            font-size: 1.5rem;
+        }
+
+        .section-title p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        /* ===== PRODUCT CARD ===== */
+        .product-card {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(232, 93, 117, 0.2);
+        }
+
+        .product-image-wrapper {
+            position: relative;
+            height: 250px;
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe8ed 100%);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image-wrapper img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+            transition: transform 0.4s ease;
+        }
+
+        .product-card:hover .product-image-wrapper img {
+            transform: scale(1.1);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-rose));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(232, 93, 117, 0.3);
+        }
+
+        .product-body {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-category {
+            color: var(--accent-green);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .product-name {
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .product-price {
+            color: var(--primary-rose);
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .product-footer {
+            margin-top: auto;
+            text-align: center;
+        }
+
+        .product-footer .btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-rose));
+            color: white;
+            border: none;
+            border-radius: 14px;
+            padding: 13px 20px;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-footer .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.3s ease;
+        }
+
+        .product-footer .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(232, 93, 117, 0.45);
+        }
+
+        .product-footer .btn:hover::before {
+            left: 100%;
+        }
+
+        /* ===== PRODUCTS SECTION ===== */
+        .products-section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== PRODUCTS GRID ===== */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        @media (max-width: 1400px) {
+            .products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        /* ===== PAGINATION STYLING ===== */
+        .pagination-section {
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe8ed 100%);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 40px 0 !important;
+            border: 2px solid rgba(232, 93, 117, 0.1);
+        }
+
+        .pagination-info {
+            background: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .pagination-section .btn-outline-primary {
+            border-color: var(--primary-pink);
+            color: var(--primary-pink);
+            transition: all 0.3s ease;
+        }
+
+        .pagination-section .btn-outline-primary:hover {
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-rose));
+            border-color: var(--primary-rose);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(232, 93, 117, 0.3);
+        }
+
+        /* ===== FEATURES SECTION ===== */
+        .features-section {
+            background: white;
+            padding: 60px 40px;
+            margin: 50px 0;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-item {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .feature-item i {
+            font-size: 3rem;
+            color: var(--primary-pink);
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover i {
+            transform: scale(1.2);
+            color: var(--primary-rose);
+        }
+
+        .feature-item h4 {
+            color: var(--text-dark);
+            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .feature-item p {
+            color: var(--text-light);
+            margin: 0;
+            font-size: 0.95rem;
+        }
+
+        /* ===== FOOTER STYLING ===== */
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        a.text-dark:hover {
+            color: var(--primary-rose) !important;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .hero-banner h1 {
+                font-size: 2rem;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .search-form .form-group {
+                min-width: 100%;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+                gap: 20px;
+            }
+
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar navbar-expand-lg navbar-flower sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/home"><i class="fas fa-leaf"></i> Flower Shop</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="ms-auto d-flex align-items-center gap-2">
+                    <div sec:authorize="!isAuthenticated()">
+                        <a th:href="@{/register}" class="nav-btn btn btn-outline-primary me-2">Đăng ký</a>
+                        <a th:href="@{/login}" class="nav-btn btn nav-btn-primary">Đăng nhập</a>
+                    </div>
+
+                    <div sec:authorize="isAuthenticated()" class="d-flex align-items-center gap-3">
+                        <span class="small fw-600">Xin chào, <span sec:authentication="name"
+                                class="text-primary fw-700"></span>!</span>
+
+                        <a th:href="@{/orders}" class="nav-btn btn btn-outline-primary">
+                            <i class="fas fa-list"></i> Đơn hàng
+                        </a>
+
+                        <a th:href="@{/cart}" class="nav-btn btn btn-outline-primary">
+                            <i class="fas fa-shopping-cart"></i> Giỏ hàng
+                        </a>
+
+                        <a sec:authorize="hasRole('ADMIN')" th:href="@{/products}"
+                            class="nav-btn btn btn-outline-secondary">
+                            <i class="fas fa-cogs"></i> Quản lý
+                        </a>
+
+                        <form th:action="@{/logout}" method="post" class="m-0">
+                            <button type="submit" class="nav-btn btn btn-outline-danger">Thoát</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ===== HERO BANNER ===== -->
+    <div class="container mt-5">
+        <div class="hero-banner">
+            <div class="row align-items-center">
+                <div class="col-lg-8">
+                    <h1>Những Bông Hoa Tươi Tắn</h1>
+                    <p>Tặng yêu thương qua từng bông hoa. Chúng tôi cung cấp hoa tươi nhất với dịch vụ giao hàng nhanh
+                        chóng và uy tín.</p>
+                    <a th:href="@{/home}" class="btn nav-btn-primary me-3">
+                        <i class="fas fa-shopping-bag me-2"></i>Mua Ngay
+                    </a>
+                    <a th:href="@{/home}" class="btn btn-outline-danger">
+                        <i class="fas fa-heart me-2"></i>Khám Phá
+                    </a>
+                </div>
+                <div class="col-lg-4 text-center">
+                    <i class="fas fa-spa" style="font-size: 150px; color: var(--primary-pink); opacity: 0.8;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        <!-- ===== SEARCH SECTION ===== -->
+        <div class="search-banner">
+            <h3 class="text-center mb-4"><i class="fas fa-search me-2"></i>Tìm Kiếm Hoa Yêu Thích</h3>
+            <form th:action="@{/search}" method="get" class="search-form">
+                <div class="form-group flex-grow-1">
+                    <label for="keyword">Tên Hoa:</label>
+                    <input type="text" id="keyword" name="keyword" class="form-control"
+                        placeholder="Ví dụ: Hoa Hồng, Hoa Loa Kèn..." th:value="${keyword}">
+                </div>
+
+                <div class="form-group" style="min-width: 180px;">
+                    <label for="categoryId">Loại Hoa:</label>
+                    <select id="categoryId" name="categoryId" class="form-select">
+                        <option value="">-- Tất Cả --</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"
+                            th:selected="${categoryId != null and categoryId == cat.id}">
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="min-width: 180px;">
+                    <label for="sortBy">Sắp Xếp:</label>
+                    <select id="sortBy" name="sortBy" class="form-select">
+                        <option value="">-- Mặc Định --</option>
+                        <option value="name_asc" th:selected="${sortBy == 'name_asc'}">A-Z</option>
+                        <option value="name_desc" th:selected="${sortBy == 'name_desc'}">Z-A</option>
+                        <option value="price_asc" th:selected="${sortBy == 'price_asc'}">Giá: Thấp → Cao</option>
+                        <option value="price_desc" th:selected="${sortBy == 'price_desc'}">Giá: Cao → Thấp</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search me-2"></i>Tìm
+                </button>
+            </form>
+        </div>
+
+        <!-- ===== PRODUCTS SECTION ===== -->
+        <div class="container pb-5" style="margin-top: 60px;">
+            <div class="products-section">
+                <div class="section-title">
+                    <h2>Hoa Nổi Bật Hôm Nay</h2>
+                    <p>Những bông hoa đẹp nhất được tuyển chọn dành cho bạn</p>
+                </div>
+
+                <div class="products-grid">
+                    <div th:each="p : ${products}">
+                        <a th:href="@{'/products/detail/' + ${p.id}}" class="text-dark">
+                            <div class="card product-card">
+                                <div class="product-image-wrapper">
+                                    <!-- <span class="product-badge">Đặc Sắc</span> -->
+                                    <img th:src="${p.image}" alt="Product"
+                                        onerror="this.src='https://via.placeholder.com/250?text=Hoa';">
+                                </div>
+                                <div class="product-body">
+                                    <div class="product-category">
+                                        <i class="fas fa-leaf me-2"></i>
+                                        <span th:text="${p.category != null ? p.category.name : 'Khác'}"></span>
+                                    </div>
+                                    <h5 class="product-name" th:text="${p.name}">Tên Hoa</h5>
+                                    <div class="product-price"
+                                        th:text="${#numbers.formatInteger(p.price, 3, 'POINT')} + '₫'">
+                                    </div>
+                                    <div class="product-footer">
+                                        <button class="btn">
+                                            <i class="fas fa-eye me-2"></i>Xem Chi Tiết
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- ===== PAGINATION SECTION ===== -->
+                    <div th:if="${totalPages > 1}" class="pagination-section"
+                        style="margin: 40px 0 !important; display: flex; justify-content: center; align-items: center; gap: 15px;">
+                        <!-- Previous Button -->
+                        <a th:if="${currentPage > 0}" th:href="@{/?page={page}(page=${currentPage - 1})}"
+                            class="btn btn-outline-primary rounded-pill fw-bold" style="padding: 10px 20px;">
+                            <i class="fas fa-chevron-left me-2"></i>Trang Trước
+                        </a>
+                        <span th:unless="${currentPage > 0}"
+                            class="btn btn-outline-secondary rounded-pill fw-bold disabled"
+                            style="padding: 10px 20px; opacity: 0.5;">
+                            <i class="fas fa-chevron-left me-2"></i>Trang Trước
+                        </span>
+
+                        <!-- Page Info -->
+                        <span class="pagination-info" style="font-weight: bold; color: #c2185b; font-size: 1rem;">
+                            Trang <span th:text="${currentPage + 1}"></span> / <span th:text="${totalPages}"></span>
+                        </span>
+
+                        <!-- Next Button -->
+                        <a th:if="${currentPage < totalPages - 1}" th:href="@{/?page={page}(page=${currentPage + 1})}"
+                            class="btn btn-outline-primary rounded-pill fw-bold" style="padding: 10px 20px;">
+                            Trang Sau <i class="fas fa-chevron-right ms-2"></i>
+                        </a>
+                        <span th:unless="${currentPage < totalPages - 1}"
+                            class="btn btn-outline-secondary rounded-pill fw-bold disabled"
+                            style="padding: 10px 20px; opacity: 0.5;">
+                            Trang Sau <i class="fas fa-chevron-right ms-2"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== FEATURES SECTION ===== -->
+            <div class="features-section">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="feature-item">
+                            <i class="fas fa-leaf"></i>
+                            <h4>Hoa Tươi</h4>
+                            <p>100% hoa tươi nhập trực tiếp từ các vùng hoa đẹp nhất</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="feature-item">
+                            <i class="fas fa-truck"></i>
+                            <h4>Giao Hàng Nhanh</h4>
+                            <p>Giao hàng trong 2 giờ tại khu vực thành phố</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="feature-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Chất Lượng Đảm Bảo</h4>
+                            <p>Cam kết hoa luôn đẹp khi tới tay bạn</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="feature-item">
+                            <i class="fas fa-heart"></i>
+                            <h4>Tình Cảm Chân Thành</h4>
+                            <p>Gói tặng đặc biệt với lời chúc được thiết kế riêng</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

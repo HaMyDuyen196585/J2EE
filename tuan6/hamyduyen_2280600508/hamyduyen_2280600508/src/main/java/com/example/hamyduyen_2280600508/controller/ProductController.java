@@ -27,9 +27,43 @@ public class ProductController {
 
     // --- TRANG DÀNH CHO KHÁCH HÀNG (HOME) ---
     @GetMapping({"/", "/home"})
-    public String showHomePage(Model model) {
-        model.addAttribute("products", productService.getAllProducts());
+    public String showHomePage(Model model,
+                               @RequestParam(value = "keyword", required = false) String keyword,
+                               @RequestParam(value = "categoryId", required = false) Integer categoryId,
+                               @RequestParam(value = "sort", required = false) String sort,
+                               @RequestParam(value = "page", defaultValue = "1") int page) {
+        final int PAGE_SIZE = 5;
+        
+        List<Product> products;
+
+        // Filter by keyword or category
+        if (keyword != null && !keyword.isEmpty()) {
+            products = productService.searchProducts(keyword);
+        } else if (categoryId != null) {
+            products = productService.getProductsByCategory(categoryId);
+        } else {
+            products = productService.getAllProducts();
+        }
+
+        // Sort by price
+        if ("asc".equals(sort)) {
+            products = productService.sortByPriceAsc(products);
+        } else if ("desc".equals(sort)) {
+            products = productService.sortByPriceDesc(products);
+        }
+
+        // Pagination
+        int totalPages = productService.getTotalPages(products, PAGE_SIZE);
+        products = productService.paginate(products, page, PAGE_SIZE);
+
+        model.addAttribute("products", products);
         model.addAttribute("categories", categoryService.getAllCategories());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("categoryId", categoryId);
+        model.addAttribute("sort", sort);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        
         return "client/home";
     }
 
@@ -83,17 +117,19 @@ public class ProductController {
                               @RequestParam("imageFile") MultipartFile imageFile) {
         if (!imageFile.isEmpty()) {
             try {
-                String fileName = imageFile.getOriginalFilename();
+                String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
 
+                // Save to target/classes/static/images (running app directory)
                 String targetDir = new File("target/classes/static/images/").getAbsolutePath();
                 Path targetPath = Paths.get(targetDir);
                 if (!Files.exists(targetPath)) Files.createDirectories(targetPath);
-                Files.copy(imageFile.getInputStream(), targetPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                Files.write(targetPath.resolve(fileName), imageFile.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
+                // Also save to src/main/resources/static/images (for IDE hot reload)
                 String srcDir = new File("src/main/resources/static/images/").getAbsolutePath();
                 Path srcPath = Paths.get(srcDir);
                 if (!Files.exists(srcPath)) Files.createDirectories(srcPath);
-                Files.copy(imageFile.getInputStream(), srcPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+                Files.write(srcPath.resolve(fileName), imageFile.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 
                 product.setImage("/images/" + fileName);
             } catch (IOException e) {

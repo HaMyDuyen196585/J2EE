@@ -25,4 +25,8 @@ public class AccountService implements UserDetailsService {
                         .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
                         .collect(Collectors.toList()));
     }
+
+    public Account findByUsername(String username) {
+        return accountRepository.findByLoginName(username).orElse(null);
+    }
 }

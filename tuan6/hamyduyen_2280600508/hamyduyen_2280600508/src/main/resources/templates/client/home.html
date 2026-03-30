@@ -36,6 +36,39 @@
         a {
             text-decoration: none;
         }
+
+        .filter-section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .pagination {
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .cart-icon-wrapper {
+            position: relative;
+            display: inline-block;
+        }
     </style>
 </head>
 
@@ -43,7 +76,12 @@
 
     <nav class="navbar navbar-expand-lg navbar-dark px-4 mb-4 shadow">
         <a class="navbar-brand fw-bold" href="/home"><i class="fas fa-microchip me-2"></i>Flower</a>
-        <div class="ms-auto d-flex align-items-center">
+        <div class="ms-auto d-flex align-items-center gap-3">
+
+            <a th:href="@{/cart/view}" class="btn btn-outline-light fw-bold cart-icon-wrapper">
+                <i class="fas fa-shopping-cart"></i> Giỏ hàng
+                <span class="cart-badge" th:text="${cartSize != null and cartSize > 0 ? cartSize : ''}"></span>
+            </a>
 
             <div sec:authorize="!isAuthenticated()">
                 <a th:href="@{/register}" class="btn btn-outline-warning me-2 fw-bold">Đăng ký</a>
@@ -66,8 +104,48 @@
     </nav>
 
     <div class="container pb-5">
-        <h2 class="fw-bold mb-4 text-center">Sản Phẩm Nổi Bật</h2>
-        <div class="row row-cols-1 row-cols-md-3 g-4">
+        <!-- Search, Filter, Sort Section -->
+        <div class="filter-section">
+            <h4 class="mb-4 fw-bold">Tìm kiếm & Lọc sản phẩm</h4>
+            <form method="get" th:action="@{/home}" class="row g-3">
+                <!-- Search input -->
+                <div class="col-md-4">
+                    <input type="text" name="keyword" class="form-control" placeholder="Tìm kiếm sản phẩm..."
+                        th:value="${keyword != null ? keyword : ''}">
+                </div>
+
+                <!-- Category filter -->
+                <div class="col-md-3">
+                    <select name="categoryId" class="form-select">
+                        <option value="">-- Tất cả danh mục --</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}"
+                            th:text="${cat.name}"
+                            th:selected="${categoryId != null and categoryId == cat.id}">Category</option>
+                    </select>
+                </div>
+
+                <!-- Sort dropdown -->
+                <div class="col-md-3">
+                    <select name="sort" class="form-select">
+                        <option value="">-- Sắp xếp --</option>
+                        <option value="asc" th:selected="${sort == 'asc'}">Giá: Tăng dần</option>
+                        <option value="desc" th:selected="${sort == 'desc'}">Giá: Giảm dần</option>
+                    </select>
+                </div>
+
+                <!-- Search button -->
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">
+                        <i class="fas fa-search"></i> Tìm kiếm
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <h2 class="fw-bold mb-4 text-center">Sản Phẩm</h2>
+        
+        <!-- Products display -->
+        <div class="row row-cols-1 row-cols-md-3 g-4" th:if="${products != null and products.size() > 0}">
             <div class="col" th:each="p : ${products}">
                 <a th:href="@{'/products/detail/' + ${p.id}}" class="text-dark">
                     <div class="card product-card h-100">
@@ -87,7 +165,41 @@
                 </a>
             </div>
         </div>
+
+        <!-- No products message -->
+        <div th:if="${products == null or products.size() == 0}" class="alert alert-warning text-center mt-4">
+            <i class="fas fa-search"></i> Không tìm thấy sản phẩm nào
+        </div>
+
+        <!-- Pagination -->
+        <nav th:if="${totalPages > 1}" aria-label="Page navigation">
+            <ul class="pagination">
+                <!-- Previous button -->
+                <li class="page-item" th:classappend="${currentPage == 1 ? 'disabled' : ''}">
+                    <a class="page-link" th:href="@{/home(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, page=${currentPage - 1})}"
+                        aria-label="Previous">
+                        <span aria-hidden="true"><i class="fas fa-chevron-left"></i> Previous</span>
+                    </a>
+                </li>
+
+                <!-- Page numbers -->
+                <li class="page-item" th:each="pageNum : ${#numbers.sequence(1, totalPages)}"
+                    th:classappend="${pageNum == currentPage ? 'active' : ''}">
+                    <a class="page-link" th:href="@{/home(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, page=${pageNum})}"
+                        th:text="${pageNum}"></a>
+                </li>
+
+                <!-- Next button -->
+                <li class="page-item" th:classappend="${currentPage >= totalPages ? 'disabled' : ''}">
+                    <a class="page-link" th:href="@{/home(keyword=${keyword}, categoryId=${categoryId}, sort=${sort}, page=${currentPage + 1})}"
+                        aria-label="Next">
+                        <span aria-hidden="true">Next <i class="fas fa-chevron-right"></i></span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
+
 </body>
 
 </html>

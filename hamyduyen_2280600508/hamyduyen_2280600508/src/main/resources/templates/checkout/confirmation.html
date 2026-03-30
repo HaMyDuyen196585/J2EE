@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Xác Nhận Đơn Hàng - Cửa Hàng Hoa Xinh</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-color: #c2185b;
+            --secondary-color: #ec407a;
+            --light-bg: #fff3e0;
+            --navy: #1a237e;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            background: linear-gradient(90deg, var(--navy) 0%, var(--primary-color) 100%);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+
+        .confirmation-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .success-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .success-header {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .success-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: successBounce 0.8s ease-in-out;
+        }
+
+        @keyframes successBounce {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        .success-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .success-message {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .confirmation-body {
+            padding: 40px;
+            background: white;
+        }
+
+        .info-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: var(--navy);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-item .label {
+            color: #666;
+            font-weight: 500;
+        }
+
+        .info-item .value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .order-id-box {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border-left: 5px solid #4caf50;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .order-id-label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .order-id {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2e7d32;
+            font-family: 'Courier New', monospace;
+        }
+
+        .next-steps {
+            background: linear-gradient(135deg, #fff9c4 0%, #fff59d 100%);
+            border-left: 5px solid #fbc02d;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .next-steps-title {
+            font-weight: bold;
+            color: var(--navy);
+            margin-bottom: 10px;
+        }
+
+        .next-steps ul {
+            margin-bottom: 0;
+            padding-left: 25px;
+        }
+
+        .next-steps li {
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(90deg, var(--navy) 0%, var(--primary-color) 100%);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(194, 24, 91, 0.3);
+            color: white;
+        }
+
+        .btn-secondary-custom {
+            background: #f5f5f5;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-secondary-custom:hover {
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+        }
+
+        .contact-info {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .contact-info p {
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .contact-info .phone,
+        .contact-info .email {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .confirmation-container {
+                margin: 20px 10px;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .success-title {
+                font-size: 1.5rem;
+            }
+
+            .success-icon {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-flower me-2"></i>Cửa Hàng Hoa Xinh
+            </a>
+        </div>
+    </nav>
+
+    <div class="confirmation-container">
+        <!-- Success Card -->
+        <div class="success-card">
+            <div class="success-header">
+                <div class="success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="success-title">Đơn Hàng Đã Xác Nhận!</div>
+                <div class="success-message">Cảm ơn bạn đã đặt hàng tại Cửa Hàng Hoa Xinh</div>
+            </div>
+
+            <div class="confirmation-body">
+                <!-- Order ID -->
+                <div class="order-id-box">
+                    <div class="order-id-label">Mã Đơn Hàng:</div>
+                    <div class="order-id" th:text="'#' + ${orderId}"></div>
+                </div>
+
+                <!-- Order Information -->
+                <div class="info-section">
+                    <div class="section-title">
+                        <i class="fas fa-info-circle me-2"></i>Thông Tin Đơn Hàng
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Ngày Đặt Hàng:</span>
+                        <span class="value" th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Tổng Tiền:</span>
+                        <span class="value" th:text="${#numbers.formatInteger(orderTotal, 3, 'POINT')} + ' đ'">
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Trạng Thái:</span>
+                        <span class="value">
+                            <span class="badge bg-success">Chờ Xử Lý</span>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Next Steps -->
+                <div class="next-steps">
+                    <div class="next-steps-title">
+                        <i class="fas fa-tasks me-2"></i>Các Bước Tiếp Theo
+                    </div>
+                    <ul>
+                        <li><strong>Bước 1:</strong> Chúng tôi sẽ kiểm tra và xác nhận đơn hàng trong 2 giờ</li>
+                        <li><strong>Bước 2:</strong> Bạn sẽ nhận được email xác nhận khi đơn hàng được xử lý</li>
+                        <li><strong>Bước 3:</strong> Hoa sẽ được giao tới bạn trong vòng 24-48 giờ</li>
+                        <li><strong>Bước 4:</strong> Nhận hoa và để lại đánh giá cho chúng tôi</li>
+                    </ul>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="contact-info">
+                    <p><i class="fas fa-phone-alt me-2"></i>Liên Hệ: <span class="phone">0123 456 789</span></p>
+                    <p><i class="fas fa-envelope me-2"></i>Email: <span class="email">support@hoaxinh.com</span></p>
+                    <p><i class="fas fa-clock me-2"></i>Hỗ Trợ: 8:00 - 22:00 (Hàng Ngày)</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="button-group">
+                    <a th:href="@{/}" class="btn-primary-custom">
+                        <i class="fas fa-home me-2"></i>Trang Chủ
+                    </a>
+                    <a th:href="@{/products}" class="btn-secondary-custom">
+                        <i class="fas fa-shopping-bag me-2"></i>Tiếp Tục Mua Sắm
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

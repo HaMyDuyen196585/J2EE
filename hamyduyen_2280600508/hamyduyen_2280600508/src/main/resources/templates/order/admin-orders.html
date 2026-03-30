@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quản Lý Đơn Hàng - Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary-pink: #c2185b;
+            --secondary-rose: #e85d75;
+            --light-bg: #fdf8f5;
+        }
+
+        body {
+            background: var(--light-bg);
+        }
+
+        .navbar {
+            background: linear-gradient(90deg, #1a237e, var(--primary-pink));
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: bold;
+            color: white !important;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+        }
+
+        .page-header h2 {
+            color: var(--primary-pink);
+            font-weight: 700;
+            margin-bottom: 0;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+
+        .table {
+            margin-bottom: 0;
+        }
+
+        .table thead {
+            background: linear-gradient(90deg, #f8f9fa 0%, #e9ecef 100%);
+        }
+
+        .table th {
+            border: none;
+            color: var(--primary-pink);
+            font-weight: 700;
+            padding: 15px;
+            border-bottom: 3px solid var(--primary-pink);
+        }
+
+        .table td {
+            padding: 15px;
+            vertical-align: middle;
+            border-color: #f0f0f0;
+        }
+
+        .table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .order-id {
+            color: var(--primary-pink);
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-shipped {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn-action {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin: 0 3px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: linear-gradient(90deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
+            color: white;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(90deg, #4CAF50 0%, #43A047 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.3);
+            color: white;
+        }
+
+        .customer-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .customer-name {
+            font-weight: 700;
+            color: var(--primary-pink);
+        }
+
+        .customer-email {
+            font-size: 0.9rem;
+            color: #999;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-state-text {
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        .total-orders {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: var(--primary-pink);
+        }
+
+        @media (max-width: 768px) {
+            .table {
+                font-size: 0.9rem;
+            }
+
+            .btn-action {
+                padding: 4px 8px;
+                font-size: 0.75rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/products}">
+                <i class="fas fa-cogs me-2"></i>Admin Dashboard
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/products}" style="color: white;">
+                            <i class="fas fa-boxes me-2"></i>Sản Phẩm
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" style="color: white;">
+                            <i class="fas fa-shopping-cart me-2"></i>Đơn Hàng
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="nav-link"
+                                style="background: none; border: none; color: white; cursor: pointer;">
+                                <i class="fas fa-sign-out-alt me-2"></i>Thoát
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid" style="margin: 30px; max-width: 1200px;">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2><i class="fas fa-shopping-cart me-2"></i>Quản Lý Đơn Hàng</h2>
+            <p class="text-muted mb-0">Xem và xác nhận đơn hàng từ khách hàng</p>
+        </div>
+
+        <!-- Total Orders -->
+        <div th:if="${!orders.isEmpty()}" class="total-orders">
+            <i class="fas fa-info-circle me-2"></i>
+            Tổng Số Đơn Hàng: <span th:text="${orders.size()}"></span>
+        </div>
+
+        <!-- Orders Table -->
+        <div th:if="${!orders.isEmpty()}" class="table-container">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Mã Đơn Hàng</th>
+                        <th>Khách Hàng</th>
+                        <th>Ngày Đặt</th>
+                        <th>Tổng Tiền</th>
+                        <th>Trạng Thái</th>
+                        <th>Thao Tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td class="order-id">#<span th:text="${order.id}"></span></td>
+                        <td>
+                            <div class="customer-info">
+                                <span class="customer-name" th:text="${order.customerName}"></span>
+                                <span class="customer-email" th:text="${order.customerEmail}"></span>
+                            </div>
+                        </td>
+                        <td th:text="${order.formattedDate}"></td>
+                        <td style="color: var(--secondary-rose); font-weight: 700;">
+                            <span th:text="${#numbers.formatInteger(order.totalAmount, 3, 'POINT')} + ' đ'"></span>
+                        </td>
+                        <td>
+                            <span class="status-badge" th:classappend="${'status-' + order.status.name().toLowerCase()}"
+                                th:text="${order.status.label}"></span>
+                        </td>
+                        <td>
+                            <a th:href="@{/orders/admin/{id}(id=${order.id})}" class="btn btn-action btn-view">
+                                <i class="fas fa-eye me-1"></i>Chi Tiết
+                            </a>
+                            <a th:if="${order.status.name() == 'PENDING'}"
+                                th:href="@{/orders/admin/{id}(id=${order.id})}" class="btn btn-action btn-confirm">
+                                <i class="fas fa-check me-1"></i>Xác Nhận
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Empty State -->
+        <div th:if="${orders.isEmpty()}" class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-inbox"></i>
+            </div>
+            <div class="empty-state-text">Không có đơn hàng nào</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

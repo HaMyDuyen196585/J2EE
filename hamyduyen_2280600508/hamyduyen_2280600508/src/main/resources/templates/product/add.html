@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Sản Phẩm - Flower Shop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: 'Playfair Display', serif;
+        }
+
+        :root {
+            --primary-pink: #e85d75;
+            --primary-rose: #d63447;
+            --secondary-coral: #f08080;
+            --accent-green: #66bb6a;
+            --light-bg: #fdf8f5;
+            --cream: #fffbf5;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fff5f7 0%, #fef0f3 100%);
+            min-height: 100vh;
+            color: var(--text-dark);
+        }
+
+        .navbar-flower {
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-rose));
+            box-shadow: 0 2px 10px rgba(232, 93, 117, 0.2);
+            padding: 0.8rem 0;
+        }
+
+        .navbar-flower .navbar-brand {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: white !important;
+            font-family: 'Playfair Display', serif;
+            letter-spacing: 1px;
+        }
+
+        .navbar-flower .navbar-brand i {
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .container-form {
+            max-width: 700px;
+            margin: 40px auto;
+        }
+
+        .card-form {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(232, 93, 117, 0.15);
+            overflow: hidden;
+        }
+
+        .card-header-form {
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-rose));
+            color: white;
+            padding: 25px;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .card-header-form i {
+            margin-right: 12px;
+        }
+
+        .card-body-form {
+            padding: 40px;
+        }
+
+        .form-group-custom {
+            margin-bottom: 25px;
+        }
+
+        .form-group-custom label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+            display: block;
+            font-size: 1rem;
+        }
+
+        .form-group-custom input,
+        .form-group-custom textarea,
+        .form-group-custom select {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group-custom input:focus,
+        .form-group-custom textarea:focus,
+        .form-group-custom select:focus {
+            outline: none;
+            border-color: var(--primary-pink);
+            box-shadow: 0 0 0 4px rgba(232, 93, 117, 0.1);
+        }
+
+        .form-group-custom textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-group-custom input::placeholder,
+        .form-group-custom textarea::placeholder {
+            color: #bdbdbd;
+        }
+
+        .form-row-custom {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .file-upload-group {
+            margin: 30px 0;
+        }
+
+        .file-upload-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            display: block;
+            font-size: 1rem;
+        }
+
+        .file-upload-input {
+            display: none;
+        }
+
+        .file-upload-box {
+            border: 3px dashed var(--primary-pink);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(232, 93, 117, 0.03);
+        }
+
+        .file-upload-box:hover {
+            background: rgba(232, 93, 117, 0.08);
+            border-color: var(--primary-rose);
+        }
+
+        .file-upload-icon {
+            font-size: 2.5rem;
+            color: var(--primary-pink);
+            margin-bottom: 12px;
+        }
+
+        .file-upload-text {
+            color: var(--text-dark);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .file-upload-hint {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .file-name-display {
+            margin-top: 10px;
+            color: var(--accent-green);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .btn-group-form {
+            display: flex;
+            gap: 12px;
+            margin-top: 35px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-rose));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(232, 93, 117, 0.3);
+        }
+
+        .btn-back {
+            background: white;
+            color: var(--text-dark);
+            border: 2px solid #e9ecef;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .btn-back:hover {
+            border-color: var(--primary-pink);
+            color: var(--primary-pink);
+        }
+
+        .small-hint {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .container-form {
+                margin: 20px auto;
+            }
+
+            .card-body-form {
+                padding: 25px;
+            }
+
+            .form-row-custom {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-flower navbar-expand-lg">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/products">
+                <i class="fas fa-leaf"></i> Flower Shop Admin
+            </a>
+            <span class="text-white ms-auto me-3">Quản Lý Sản Phẩm</span>
+        </div>
+    </nav>
+
+    <!-- FORM CONTAINER -->
+    <div class="container-form">
+        <a href="/products" class="btn-back mb-4">
+            <i class="fas fa-arrow-left"></i> Quay Lại
+        </a>
+
+        <div class="card-form">
+            <div class="card-header-form">
+                <i class="fas fa-box-open"></i> Thông Tin Sản Phẩm
+            </div>
+
+            <div class="card-body-form">
+                <form th:action="@{/products/save}" th:object="${product}" method="post" enctype="multipart/form-data">
+                    <!-- Hidden fields -->
+                    <input type="hidden" th:field="*{id}">
+                    <input type="hidden" th:field="*{image}">
+
+                    <!-- Product Name -->
+                    <div class="form-group-custom">
+                        <label for="productName">
+                            <i class="fas fa-tag me-2" style="color: var(--primary-pink);"></i>Tên Hoa / Sản Phẩm
+                        </label>
+                        <input type="text" id="productName" th:field="*{name}" class="form-control" required
+                            placeholder="Ví dụ: Hoa Hồng Đà Lạt Premium">
+                    </div>
+
+                    <!-- Price & Category Row -->
+                    <div class="form-row-custom">
+                        <div class="form-group-custom">
+                            <label for="productPrice">
+                                <i class="fas fa-tag me-2" style="color: var(--primary-pink);"></i>Giá Bán (VNĐ)
+                            </label>
+                            <input type="number" id="productPrice" th:field="*{price}" class="form-control" required
+                                min="0" placeholder="150000">
+                        </div>
+
+                        <div class="form-group-custom">
+                            <label for="categorySelect">
+                                <i class="fas fa-leaf me-2" style="color: var(--accent-green);"></i>Loại Hoa
+                            </label>
+                            <select id="categorySelect" th:field="*{category.id}" class="form-control" required>
+                                <option value="">-- Chọn danh mục --</option>
+                                <option th:each="c : ${categories}" th:value="${c.id}" th:text="${c.name}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group-custom">
+                        <label for="productDesc">
+                            <i class="fas fa-pencil me-2" style="color: var(--primary-pink);"></i>Mô Tả Chi Tiết
+                        </label>
+                        <textarea id="productDesc" th:field="*{description}" class="form-control"
+                            placeholder="Mô tả đặc điểm, nguồn gốc, cách bảo quản..."></textarea>
+                        <div class="small-hint">Nhập mô tả chi tiết về sản phẩm để khách hàng hiểu rõ hơn</div>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div class="file-upload-group">
+                        <label class="file-upload-label">
+                            <i class="fas fa-image me-2" style="color: var(--primary-pink);"></i>Hình Ảnh Sản Phẩm
+                        </label>
+                        <label for="imageInput" class="file-upload-box">
+                            <div class="file-upload-icon">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                            </div>
+                            <div class="file-upload-text">Nhấp để chọn ảnh</div>
+                            <div class="file-upload-hint">hoặc kéo thả file vào đây</div>
+                            <div class="file-name-display" id="fileNameDisplay"></div>
+                        </label>
+                        <input type="file" id="imageInput" name="imageFile" class="file-upload-input"
+                            accept="image/png, image/jpeg, image/jpg">
+                        <div class="small-hint">Định dạng: JPG, PNG | Tối đa: 5MB | Bỏ trống nếu không đổi ảnh</div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="btn-group-form">
+                        <a href="/products" class="btn-back" style="flex: 1; text-align: center;">
+                            <i class="fas fa-times"></i> Hủy
+                        </a>
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save me-2"></i>Lưu Sản Phẩm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // File upload handling
+        const imageInput = document.getElementById('imageInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const fileUploadBox = document.querySelector('.file-upload-box');
+
+        imageInput.addEventListener('change', function (e) {
+            if (this.files && this.files[0]) {
+                fileNameDisplay.textContent = '✓ ' + this.files[0].name;
+            }
+        });
+
+        // Drag and drop
+        fileUploadBox.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadBox.style.background = 'rgba(232, 93, 117, 0.15)';
+        });
+
+        fileUploadBox.addEventListener('dragleave', () => {
+            fileUploadBox.style.background = 'rgba(232, 93, 117, 0.03)';
+        });
+
+        fileUploadBox.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadBox.style.background = 'rgba(232, 93, 117, 0.03)';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                imageInput.files = files;
+                fileNameDisplay.textContent = '✓ ' + files[0].name;
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
